@@ -32,11 +32,6 @@ fi
 echo "Make sure your workstation is having sufficient storage"
 read -p "Do you want to continue [n]: " cont
 
-# Clone this project and navigate into it
-
-git clone https://github.com/matwerber1/tpc-ds-datagen-to-aws-s3
-
-cd tpc-ds-datagen-to-aws-s3
 
 # Compile the TPC-DS generator for your environment
 # cd tpc-ds/v2.11.0rc2/tools && make
@@ -84,7 +79,6 @@ S3_FULL_PATH=$S3_BUCKET/$S3_USER_PREFIX/${SCALE}gb
 CURR_DIR=$(pwd)
 
  
-
  
 
 # Relative path to the data generation tool:
@@ -197,56 +191,6 @@ do
 
  
 
-  # Our table name should match our filename; the variable below just makes this script more readable:
-
-  TABLE=$FILENAME
-
- 
-
-  # Generate the SQL to load our data from S3 to Redshift.
-
-  SQL="copy $TABLE from '$S3_FULL_PATH/$FILENAME/' iam_role '$IAM_ROLE' gzip delimiter '|' COMPUPDATE ON ACCEPTINVCHARS region '$BUCKET_REGION';"
-
- 
-
-  # Write SQL to our sql script:
-
-  echo $SQL >> load_tables.sql
-
- 
-
-done
-
- 
-
-QUERY_OUTPUT_DIR=$CURR_DIR/queries
-
-mkdir -p $QUERY_OUTPUT_DIR
-
- 
-
-# Now, generate the test queries that we can later run in our Redshift cluster (after we've loaded the data):
-
-(cd $TOOL_DIR && ./dsqgen \
-
--DIRECTORY ../query_templates \
-
--INPUT ../query_templates/templates.lst \
-
--VERBOSE Y \
-
--QUALIFY Y \
-
--SCALE 1 \
-
--DIALECT netezza \
-
--OUTPUT_DIR $QUERY_OUTPUT_DIR
-
-)
-
- 
-
 echo ""
 
 echo "All done!"
@@ -254,9 +198,3 @@ echo "All done!"
 echo ""
 
 echo "Your data has been uploaded to S3."
-
-echo "Create your table schema with create-table-ddl.sql,"
-
-echo "import your data with load-tables.sql, and then"
-
-echo "use the test queries in the ./queries directory."
