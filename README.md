@@ -16,6 +16,7 @@ Instructions:
 1. Clone the project and navigate into the tpc-ds folder. 
 
 https://github.com/infrasmeworld/tpc-ds-data-to-s3
+
 cd tpc-ds-data-to-s3
 
 2. Run the create_data.sh script.
